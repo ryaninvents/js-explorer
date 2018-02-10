@@ -1,8 +1,12 @@
 {
-  "name": "Object inspector",
+  "name": "js-inspector",
   "version": "1.0.0",
   "description": "",
-  "keywords": ["react", "json", "inspector"],
+  "keywords": [
+    "react",
+    "json",
+    "inspector"
+  ],
   "homepage": "https://codesandbox.io/s/new",
   "main": "src/index.js",
   "dependencies": {
