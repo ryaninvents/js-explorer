@@ -1,0 +1,32 @@
+{
+  "name": "Object inspector",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": ["react", "json", "inspector"],
+  "homepage": "https://codesandbox.io/s/new",
+  "main": "src/index.js",
+  "dependencies": {
+    "@fortawesome/fontawesome": "latest",
+    "@fortawesome/fontawesome-free-solid": "latest",
+    "@fortawesome/react-fontawesome": "latest",
+    "emotion": "latest",
+    "lodash": "latest",
+    "prop-types": "latest",
+    "ramda": "latest",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
+    "react-emotion": "latest",
+    "react-scripts": "1.1.0",
+    "recompose": "latest",
+    "uuid-base62": "0.1.0"
+  },
+  "devDependencies": {
+    "recompose": "0.26.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
