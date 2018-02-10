@@ -1,5 +1,11 @@
 import keyBy from 'lodash/keyBy';
+import pick from 'lodash/pick';
+import chai from 'chai';
+import jestDiffs from 'chai-jest-diff';
 import createLocalInterface from './index';
+
+chai.use(jestDiffs());
+const {expect} = chai;
 
 // Semi-mocked version of the local interface which hands out IDs deterministically.
 const createInterface = () => {
@@ -23,19 +29,19 @@ describe('runtime-interface/local', () => {
       let key = {};
       const id1 = String(local.getObjectId(key));
       const id2 = String(local.getObjectId(key));
-      expect(id1).toBe(id2);
-      expect(local.getNumberOfIdsIssued()).toBe(1);
+      expect(id1).to.equal(id2);
+      expect(local.getNumberOfIdsIssued()).to.equal(1);
     });
 
     it('should generate a different ID for a different object', () => {
       const local = createInterface();
       let keyA = {};
       const idA = String(local.getObjectId(keyA));
-      expect(idA).toBe('object:0');
+      expect(idA).to.equal('object:0');
       let keyB = {};
       const idB = String(local.getObjectId(keyB));
-      expect(idB).toBe('object:1');
-      expect(local.getNumberOfIdsIssued()).toBe(2);
+      expect(idB).to.equal('object:1');
+      expect(local.getNumberOfIdsIssued()).to.equal(2);
     });
   });
   describe('getPropertiesFromValue', () => {
@@ -45,7 +51,7 @@ describe('runtime-interface/local', () => {
         const props = await local.getPropertiesFromValue(2);
         expect(
           props.map(p => ({name: p.name, id: p.id, enumerable: p.enumerable}))
-        ).toEqual([
+        ).to.deep.equal([
           {name: '__proto__', id: '@@SPECIAL: __proto__', enumerable: false},
         ]);
       });
@@ -62,19 +68,43 @@ describe('runtime-interface/local', () => {
         const propsByKey = keyBy(props, 'name');
         expect(
           props.map(p => ({name: p.name, id: p.id, enumerable: p.enumerable}))
-        ).toEqual([
+        ).to.deep.equal([
           {name: 'string', id: 'string', enumerable: true},
           {name: 'number', id: 'number', enumerable: true},
           {name: 'boolean', id: 'boolean', enumerable: true},
           {name: 'null', id: 'null', enumerable: true},
           {name: '__proto__', id: '@@SPECIAL: __proto__', enumerable: false},
         ]);
-        expect(propsByKey.string.value.type).toEqual('string');
-        expect(propsByKey.number.value.type).toEqual('number');
-        expect(propsByKey.boolean.value.type).toEqual('boolean');
-        expect(propsByKey.null.value.type).toEqual('object');
-        expect(propsByKey.null.value.subtype).toEqual('null');
+        expect(propsByKey.string.value.type).to.deep.equal('string');
+        expect(propsByKey.number.value.type).to.deep.equal('number');
+        expect(propsByKey.boolean.value.type).to.deep.equal('boolean');
+        expect(propsByKey.null.value.type).to.deep.equal('object');
+        expect(propsByKey.null.value.subtype).to.deep.equal('null');
       });
+    });
+  });
+  describe('toRemoteValue', () => {
+    it('should generate metadata correctly', () => {
+      const x = {};
+      const local = createInterface();
+      const remoteX = local.toRemoteValue(x);
+      expect(pick(remoteX, 'type', 'subtype', 'objectId')).to.deep.equal({
+        type: 'object',
+        objectId: 'object:0',
+      });
+    });
+    it('should attach the value itself as `data`', () => {
+      const x = {};
+      const local = createInterface();
+      expect(local.toRemoteValue(x).data).to.equal(x);
+    });
+    it('should give the same objectId for same object', () => {
+      const x = {};
+      const y = {};
+      const local = createInterface();
+      const remoteX = local.toRemoteValue(x.__proto__);
+      const remoteY = local.toRemoteValue(y.__proto__);
+      expect(remoteX.objectId).to.equal(remoteY.objectId);
     });
   });
 });
