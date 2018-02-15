@@ -1,17 +1,25 @@
 import React from 'react';
-import styled from 'react-emotion';
+import {css} from 'emotion';
+import get from 'lodash/get';
 
 const COLLAPSED_OBJECT = '{…}';
 const COLLAPSED_ARRAY = '[…]';
 
-const P = styled('div')`
+const propStyle = css`
   display: inline-block;
+  label: property-summary;
   &[data-non-enumerable='true'] {
     opacity: 0.5;
   }
   &[data-value-type='string'],
   &[data-value-type='symbol'] {
     color: #e45649;
+  }
+  &[data-value-type='string'] {
+    &::before, &::after {
+      content: '"';
+      color: currentColor;
+    }
   }
   &[data-value-type='number'],
   &[data-value-type='boolean'] {
@@ -25,12 +33,12 @@ const P = styled('div')`
   }
 `;
 
-const getDisplayName = property => {
+export const getDisplayName = property => {
   const {value} = property;
-  // TODO: `render` should not be attached to the data, instead a callback
-  // passed down via context
-  if (typeof value.render === 'function') return value.render();
+
   if (value.type === 'null' || value.type === 'undefined') return value.type;
+  const description = get(value, 'description');
+  if (description) return description;
 
   // Should not live here! This would break if we were looking at remote data
   if (value.type === 'function') {
@@ -57,12 +65,13 @@ const getDisplayName = property => {
 
 export default function PropertySummary({property}) {
   return (
-    <P
+    <div
+      className={propStyle}
       data-non-enumerable={!property.enumerable}
       data-value-type={property.value.type}
       data-value-subtype={property.value.subtype}
     >
       {getDisplayName(property)}
-    </P>
+    </div>
   );
 }

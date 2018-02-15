@@ -27,8 +27,8 @@ describe('runtime-interface/local', () => {
     it('should retrieve the same ID for the same object', () => {
       const local = createInterface();
       let key = {};
-      const id1 = String(local.getObjectId(key));
-      const id2 = String(local.getObjectId(key));
+      const id1 = local.getObjectId(key);
+      const id2 = local.getObjectId(key);
       expect(id1).to.equal(id2);
       expect(local.getNumberOfIdsIssued()).to.equal(1);
     });
@@ -36,19 +36,19 @@ describe('runtime-interface/local', () => {
     it('should generate a different ID for a different object', () => {
       const local = createInterface();
       let keyA = {};
-      const idA = String(local.getObjectId(keyA));
+      const idA = local.getObjectId(keyA);
       expect(idA).to.equal('object:0');
       let keyB = {};
-      const idB = String(local.getObjectId(keyB));
+      const idB = local.getObjectId(keyB);
       expect(idB).to.equal('object:1');
       expect(local.getNumberOfIdsIssued()).to.equal(2);
     });
   });
-  describe('getPropertiesFromValue', () => {
+  describe('getPropertiesFromIdentifier', () => {
     describe('number', () => {
       it('should generate properties', async () => {
         const local = createInterface();
-        const props = await local.getPropertiesFromValue(2);
+        const props = await local.getPropertiesFromIdentifier(2);
         expect(
           props.map(p => ({name: p.name, id: p.id, enumerable: p.enumerable}))
         ).to.deep.equal([
@@ -59,7 +59,7 @@ describe('runtime-interface/local', () => {
     describe('primitives', () => {
       it('should generate properties', async () => {
         const local = createInterface();
-        const props = await local.getPropertiesFromValue({
+        const props = await local.getPropertiesFromIdentifier({
           string: 'string',
           number: 2,
           boolean: true,
@@ -88,9 +88,10 @@ describe('runtime-interface/local', () => {
       const x = {};
       const local = createInterface();
       const remoteX = local.toRemoteValue(x);
-      expect(pick(remoteX, 'type', 'subtype', 'objectId')).to.deep.equal({
+      expect(pick(remoteX, 'type', 'subtype', 'objectId', 'identifier')).to.deep.equal({
         type: 'object',
         objectId: 'object:0',
+        identifier: x,
       });
     });
     it('should attach the value itself as `data`', () => {
@@ -105,6 +106,8 @@ describe('runtime-interface/local', () => {
       const remoteX = local.toRemoteValue(x.__proto__);
       const remoteY = local.toRemoteValue(y.__proto__);
       expect(remoteX.objectId).to.equal(remoteY.objectId);
+      expect(remoteX.identifier).to.equal(remoteY.identifier)
+        .and.to.equal(x.__proto__);
     });
   });
 });

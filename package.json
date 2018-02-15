@@ -13,8 +13,11 @@
     "@fortawesome/fontawesome": "latest",
     "@fortawesome/fontawesome-free-solid": "latest",
     "@fortawesome/react-fontawesome": "latest",
+    "abort-controller": "^1.0.0",
     "emotion": "latest",
+    "json-hash": "^1.2.0",
     "lodash": "latest",
+    "make-abortable": "^1.0.1",
     "prop-types": "latest",
     "ramda": "latest",
     "react": "16.2.0",
@@ -27,8 +30,10 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-jest-diff": "^1.0.2",
+    "enzyme": "^3.3.0",
     "eslint": "^4.17.0",
     "eslint-config-kennship": "^0.1.1",
+    "gh-pages": "^1.1.0",
     "recompose": "0.26.0"
   },
   "scripts": {

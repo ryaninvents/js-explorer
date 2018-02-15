@@ -26,7 +26,7 @@ const C = styled('div')({
 
 export default function Caret({
   isOpen,
-  property: {enumerable},
+  isDim,
   isExpandable,
   ...rest
 }) {
@@ -34,7 +34,7 @@ export default function Caret({
     <C
       data-is-open={isOpen}
       data-hide={!isExpandable}
-      data-non-enumerable={!enumerable}
+      data-non-enumerable={isDim}
       {...rest}
     >
       <Icon icon={faCaretRight} />

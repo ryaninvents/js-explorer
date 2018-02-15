@@ -27,3 +27,10 @@ export const JsType = {
   Boolean: 'boolean',
   Symbol: 'symbol',
 };
+
+export const DiffMarker = {
+  Added: 'Added',
+  Removed: 'Removed',
+  Changed: 'Changed',
+  Same: 'Same',
+};

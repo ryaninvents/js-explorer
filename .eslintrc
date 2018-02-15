@@ -1,2 +1,4 @@
 ---
 extends: kennship
+rules:
+  react/jsx-no-bind: off
