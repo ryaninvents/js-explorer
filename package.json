@@ -7,17 +7,15 @@
     "json",
     "inspector"
   ],
-  "homepage": "https://codesandbox.io/s/new",
+  "homepage": "/js-explorer",
   "main": "src/index.js",
   "dependencies": {
     "@fortawesome/fontawesome": "latest",
     "@fortawesome/fontawesome-free-solid": "latest",
     "@fortawesome/react-fontawesome": "latest",
-    "abort-controller": "^1.0.0",
     "emotion": "latest",
     "json-hash": "^1.2.0",
     "lodash": "latest",
-    "make-abortable": "^1.0.1",
     "prop-types": "latest",
     "ramda": "latest",
     "react": "16.2.0",

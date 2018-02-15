@@ -1,6 +1,5 @@
 import React from 'react';
-import makeAbortable from "make-abortable";
-import AbortController from "abort-controller";
+import makeAbortable, {AbortController} from "../../make-abortable";
 import {withInspectorContext} from "../InspectorContext";
 
 export default (BaseComponent) => withInspectorContext(
