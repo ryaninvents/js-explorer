@@ -10,9 +10,9 @@ export default function ObjectMember({property}) {
     <ValuePreview
       renderKey={({isOpen, toggleIsOpen}) => <Key property={property} onClick={toggleIsOpen} />}
       renderSummary={({isOpen}) => (isOpen ? null : <PropertySummary property={property} />)}
-      renderValue={({isOpen}) => (isOpen ? <Value value={property.value} /> : null)}
+      renderValue={({isOpen}) => ((isOpen && property.value !== null) ? <Value value={property.value} /> : null)}
       dimCaret={!property.enumerable}
-      isExpandable={property.value.type === JsType.Object}
+      isExpandable={property.value !== null && property.value.type === JsType.Object}
     />
   );
 }

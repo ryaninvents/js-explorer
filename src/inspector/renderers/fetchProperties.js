@@ -21,9 +21,6 @@ export default (BaseComponent) => withInspectorContext(
     }
 
     fetchProperties = (runtime, value) => {
-      if (!value) {
-        debugger;
-      }
       if (this.activePromise) {
         this.abortController.abort();
         this.activePromise = null;

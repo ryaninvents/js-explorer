@@ -58,9 +58,10 @@ const keyStyle = css`
 `;
 
 export default function Key({
-  property: {name, enumerable, value: {type}, isTopLevel, data},
+  property: {name, enumerable, value, isTopLevel, data},
   onClick,
 }) {
+  const type = get(value, 'type');
   return (
     <div
       className={keyStyle}

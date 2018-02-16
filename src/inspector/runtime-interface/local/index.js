@@ -6,6 +6,7 @@ const isEnumerable = {}.propertyIsEnumerable;
 
 const asGetter = (value) => ({
   ...value,
+  value: null,
   type: 'special',
   description: '(...)',
   unserializableValue: '(...)',
@@ -90,7 +91,7 @@ class LocalRuntimeInterface {
             properties.push({
               ...newProp,
               isOwn: false,
-              value: this.carefullyGetPropertyValue(value, newProp.name, propDesc),
+              value: null,
               enumerable: false,
               data: {
                 propertyDescriptor: propDesc,

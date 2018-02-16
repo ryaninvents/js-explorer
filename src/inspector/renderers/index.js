@@ -7,6 +7,8 @@ import DomNode from './values/DomNode';
 const htmlElementRegex = /^HTML.*Element$/;
 
 export default function renderValue({value, path}) {
+  if (value === null) return '<unknown>';
+  
   switch (value.subtype) {
     case 'null': return 'null';
     default: break;

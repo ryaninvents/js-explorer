@@ -36,6 +36,10 @@ const propStyle = css`
 export const getDisplayName = property => {
   const {value} = property;
 
+  if (value === null) return '(...)';
+
+  // TODO: does the below logic more properly live in the runtime interfaces,
+  // specifically generation of `value.description`?
   if (value.type === 'null' || value.type === 'undefined') return value.type;
   const description = get(value, 'description');
   if (description) return description;
@@ -64,12 +68,14 @@ export const getDisplayName = property => {
 };
 
 export default function PropertySummary({property}) {
+  const type = get(property, 'value.type');
+  const subtype = get(property, 'value.subtype');
   return (
     <div
       className={propStyle}
       data-non-enumerable={!property.enumerable}
-      data-value-type={property.value.type}
-      data-value-subtype={property.value.subtype}
+      data-value-type={type}
+      data-value-subtype={subtype}
     >
       {getDisplayName(property)}
     </div>
