@@ -3,7 +3,7 @@ import get from 'lodash/get';
 import ObjectValue from './ObjectValue';
 import DomNode from './DomNode';
 
-const htmlElementRegex = /^HTML.*Element$/;
+export const htmlElementRegex = /^HTML.*Element$/;
 
 export default function Value({value}) {
   if (!value) return '';

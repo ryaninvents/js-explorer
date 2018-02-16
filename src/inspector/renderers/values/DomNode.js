@@ -79,7 +79,7 @@ export class DomNode extends React.Component {
             <div>
               {this.renderChildren()}
                 <span className={tagDisplay} onClick={toggleIsOpen}>
-                  {`<${tagName.toLowerCase()} />`}
+                  {`</${tagName.toLowerCase()}>`}
                 </span>
             </div>
           ) : null
