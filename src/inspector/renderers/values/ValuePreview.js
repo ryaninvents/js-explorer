@@ -35,9 +35,9 @@ const ValuePreview = toggleOpen(function ValuePreview({
           isExpandable={isExpandable}
           onClick={toggleIsOpen}
         />{' '}
-        {renderKey({isOpen, toggleIsOpen})} {renderSummary({isOpen})}
+        {renderKey({isOpen, toggleIsOpen})} {renderSummary({isOpen, toggleIsOpen})}
       </div>
-      {renderValue({isOpen})}
+      {renderValue({isOpen, toggleIsOpen})}
     </div>
   );
 });

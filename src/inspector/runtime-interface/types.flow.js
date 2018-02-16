@@ -15,7 +15,7 @@ export type RemoteObject = {
 // Represents a property attached to an object.
 export type PropertyDescriptor = {
   name: string,
-  value: RemoteObject,
+  value: RemoteObject | null,
   writable?: boolean,
   get?: RemoteObject,
   set?: RemoteObject,
@@ -25,3 +25,7 @@ export type PropertyDescriptor = {
   isOwn?: boolean,
   symbol?: RemoteObject,
 };
+
+export interface RuntimeInterface {
+  getPropertyValue(parentValueIdentifier, propertyDescriptor): Promise<RemoteObject>
+}

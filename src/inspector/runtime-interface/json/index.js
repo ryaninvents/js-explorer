@@ -29,6 +29,10 @@ class JsonRuntimeInterface {
     return hashA === hashB;
   }
 
+  async getPropertyValue(...args) {
+    return this.src.getPropertyValue(...args);
+  }
+
   async getPropertiesFromIdentifier(identifier) {
     const props = await this.src.getPropertiesFromIdentifier(identifier);
     if (this.opts.ignorePrototype) {

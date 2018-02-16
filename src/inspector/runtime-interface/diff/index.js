@@ -1,4 +1,5 @@
 import keyBy from 'lodash/keyBy';
+import get from 'lodash/get';
 import {DiffMarker, JsType} from '../../constants';
 import diffValues from './diffValues';
 
@@ -13,7 +14,11 @@ const added = (prop) => ({
   ...prop,
   name: prop.name,
   id: key.added(prop),
-  data: {diff: DiffMarker.Added},
+  data: {
+    diff: DiffMarker.Added,
+    leftProperty: null,
+    rightProperty: prop,
+  },
   value: {
     ...prop.value,
     identifier: [VALUE_NOT_PRESENT, prop.value.identifier],
@@ -23,7 +28,11 @@ const same = (prop) => ({
   ...prop,
   name: prop.name,
   id: key(prop),
-  data: {diff: DiffMarker.Same},
+  data: {
+    diff: DiffMarker.Same,
+    leftProperty: prop,
+    rightProperty: prop,
+  },
   value: {
     ...prop.value,
     identifier: [prop.value.identifier, prop.value.identifier],
@@ -33,14 +42,22 @@ const changed = (left, right) => ({
   ...right,
   name: right.name,
   id: key(right),
-  data: {diff: DiffMarker.Changed},
+  data: {
+    diff: DiffMarker.Changed,
+    leftProperty: left,
+    rightProperty: right,
+  },
   value: diffValues(left.value, right.value),
 });
 const removed = (prop) => ({
   ...prop,
   name: prop.name,
   id: key.removed(prop),
-  data: {diff: DiffMarker.Removed},
+  data: {
+    diff: DiffMarker.Removed,
+    leftProperty: prop,
+    rightProperty: null,
+  },
   value: {
     ...prop.value,
     identifier: [prop.value.identifier, VALUE_NOT_PRESENT],
@@ -89,6 +106,16 @@ class DiffRuntimeInterface {
     return a.identifier === b.identifier;
   }
 
+  async getPropertyValue([leftId, rightId], prop) {
+    const leftProp = get(prop, 'data.leftProperty');
+    const rightProp = get(prop, 'data.rightProperty');
+    const [left, right] = await Promise.all([
+      this.src.getPropertyValue(leftId, leftProp),
+      this.src.getPropertyValue(rightId, rightProp),
+    ]);
+    return diffValues(left, right);
+  }
+
   async getPropertiesFromIdentifier([left, right]) {
     const [leftPropsList, rightPropsList] = await Promise.all([
       left === VALUE_NOT_PRESENT ? Promise.resolve([]) : this.src.getPropertiesFromIdentifier(left),
@@ -115,6 +142,14 @@ class DiffRuntimeInterface {
           // Referentially the same value
           return {
             [key(right)]: same(right),
+          };
+        }
+
+        if (left.value === null || right.value === null) {
+          // Actual value hidden behind a getter; just mark it as changed and
+          // move on. Maybe I'll circle back to this.
+          return {
+            [key(right)]: changed(left, right),
           };
         }
 

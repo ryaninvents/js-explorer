@@ -3,6 +3,7 @@ import get from 'lodash/get';
 import {JsType, JS_SUBTYPES} from '../../constants.js';
 
 const isEnumerable = {}.propertyIsEnumerable;
+const hasOwn = {}.hasOwnProperty;
 
 const asGetter = (value) => ({
   ...value,
@@ -51,6 +52,18 @@ class LocalRuntimeInterface {
       return this.toRemoteValue(applyGetter(propertyDescriptor, value));
     }
     return this.identified(asGetter(this.toRemoteValue(undefined)));
+  }
+
+  async getPropertyValue(parentValueIdentifier, descriptorObject) {
+    const value = parentValueIdentifier;
+    if (typeof value === 'object' && value !== null && hasOwn.call(value, descriptorObject.name)) {
+      return this.toRemoteValue(value[descriptorObject.name]);
+    }
+    const getter = get(descriptorObject, 'data.propertyDescriptor.get');
+    if (typeof getter === 'function' && value !== null) {
+      return this.toRemoteValue(Reflect.apply(getter, value, []));
+    }
+    throw new Error(`Could not get property "${descriptorObject.name}" of value`);
   }
 
   async getPropertiesFromIdentifier(value) {

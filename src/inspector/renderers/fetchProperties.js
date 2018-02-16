@@ -37,9 +37,39 @@ export default (BaseComponent) => withInspectorContext(
       this.activePromise = null;
     };
 
+    handleValueRequest = async (propertyName) => {
+      const descriptor = this.state.properties.find(p => p.name === propertyName);
+      if (!descriptor) return;
+      try {
+        const value = await this.props.runtime.getPropertyValue(
+          this.props.value.identifier, descriptor);
+        this.setState((state) => ({
+          properties: state.properties.map((p) => {
+            if (p.name !== propertyName) return p;
+            return {
+              ...p,
+              value,
+              wasThrown: false,
+            };
+          }),
+        }));
+      } catch (err) {
+        console.error(err);
+        this.setState((state) => ({
+          properties: state.properties.map((p) => {
+            if (p.name !== propertyName) return p;
+            return {
+              ...p,
+              wasThrown: true,
+            };
+          }),
+        }));
+      }
+    }
+
     render() {
       const {properties} = this.state;
-      return <BaseComponent properties={properties} />;
+      return <BaseComponent {...this.props} properties={properties} onFetchValue={this.handleValueRequest} />;
     }
   }
 );

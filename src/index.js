@@ -72,7 +72,7 @@ const mix = {
 const App = () => (
   <Main>
     <h2>package.json</h2>
-    <InspectorContext runtime={createLocalInterface()} inspector={{}}>
+    <InspectorContext runtime={createJsonInterface(createLocalInterface())} inspector={{}}>
       <RootValue title="package.json" value={{type: 'object', className: 'Object', identifier: pkg}} />
     </InspectorContext>
     <h2>Datatypes demo</h2>
