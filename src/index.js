@@ -1,6 +1,8 @@
 import React from 'react';
 import {render} from 'react-dom';
+import {css} from 'emotion';
 import styled from 'react-emotion';
+import {Tab, Container, Grid, Button} from 'semantic-ui-react';
 import pkg from '../package.json';
 import InspectorContext from './inspector/InspectorContext';
 import createLocalInterface from './inspector/runtime-interface/local';
@@ -51,6 +53,12 @@ const foo2 = {
   },
 };
 
+const mono = css`
+  font-family: monospace;
+  width: 100%;
+  min-height: 20em;
+`;
+
 const Main = styled('div')`
   font-family: monospace;
 `;
@@ -69,7 +77,106 @@ const mix = {
   error: new Error('Bad things!'),
 };
 
-const App = () => (
+
+class ExploreDemo extends React.Component {
+  state = {
+    value: pkg,
+  }
+  runtime = createJsonInterface(createLocalInterface());
+  render() {
+    const {value} = this.state;
+    let textArea;
+    return (
+      <Grid>
+        <Grid.Row columns={3}>
+          <Grid.Column>
+            <textarea
+              className={mono}
+              ref={(ref) => {
+                textArea = ref;
+              }}
+              defaultValue={JSON.stringify(value, null, 2)}
+            />
+          </Grid.Column>
+            <Grid.Column>
+              <InspectorContext runtime={this.runtime} inspector={{}}>
+                <RootValue title="root" value={{type: 'object', className: 'Object', identifier: value}} />
+              </InspectorContext>
+            </Grid.Column>
+        </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <Button
+                fluid
+                onClick={() => {
+                this.setState({
+                  value: JSON.parse(textArea.value),
+                });
+              }}
+              >Update</Button>
+            </Grid.Column>
+          </Grid.Row>
+      </Grid>
+    );
+  }
+}
+
+class DiffDemo extends React.Component {
+  state = {
+    valueA: foo1,
+    valueB: foo2,
+  }
+  runtime = createDiffInterface(createJsonInterface(createLocalInterface()));
+  render() {
+    const {valueA, valueB} = this.state;
+    let textAreaA;
+    let textAreaB;
+    return (
+      <Grid>
+        <Grid.Row columns={3}>
+          <Grid.Column>
+            <textarea
+              className={mono}
+              ref={(ref) => {
+                textAreaA = ref;
+              }}
+              defaultValue={JSON.stringify(valueA, null, 2)}
+            />
+          </Grid.Column>
+            <Grid.Column>
+              <InspectorContext runtime={this.runtime} inspector={{}}>
+                <RootValue title="root" value={{type: 'object', className: 'Object', identifier: [valueA, valueB]}} />
+              </InspectorContext>
+            </Grid.Column>
+              <Grid.Column>
+                <textarea
+                  className={mono}
+                  ref={(ref) => {
+                textAreaB = ref;
+              }}
+                  defaultValue={JSON.stringify(valueB, null, 2)}
+                />
+              </Grid.Column>
+        </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <Button
+                fluid
+                onClick={() => {
+                this.setState({
+                  valueA: JSON.parse(textAreaA.value),
+                  valueB: JSON.parse(textAreaB.value),
+                });
+              }}
+              >Update</Button>
+            </Grid.Column>
+          </Grid.Row>
+      </Grid>
+    );
+  }
+}
+
+const KitchenSink = () => (
   <Main>
     <h2>package.json</h2>
     <InspectorContext runtime={createJsonInterface(createLocalInterface())} inspector={{}}>
@@ -100,6 +207,19 @@ const App = () => (
       <RootValue title="document.body" value={{type: 'object', className: 'HTMLBodyElement', identifier: document.body}} />
     </InspectorContext>
   </Main>
+);
+
+const App = () => (
+  <Container>
+    <Tab
+      menu={{pointing: true}}
+      panes={[
+        {menuItem: 'Kitchen sink', render: KitchenSink},
+        {menuItem: 'JSON inspector', render: () => <ExploreDemo />},
+        {menuItem: 'JSON diff', render: () => <DiffDemo />},
+      ]}
+    />
+  </Container>
 );
 
 render(<App />, document.getElementById('root'));

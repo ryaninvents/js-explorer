@@ -8,6 +8,7 @@ const previewRow = css`
   flex: 0 0;
   display: flex column;
   padding-left: 1.5ch;
+  font-family: monospace;
 `;
 
 const previewSummary = css`

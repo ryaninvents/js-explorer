@@ -23,6 +23,7 @@
     "react-emotion": "latest",
     "react-scripts": "1.1.0",
     "recompose": "latest",
+    "semantic-ui-react": "^0.78.2",
     "uuid-base62": "0.1.0"
   },
   "devDependencies": {
